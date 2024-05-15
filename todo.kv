@@ -38,15 +38,11 @@ MDScreen:
 
     
 
-    
-
-
-<DialogContent>:
+<DialogCont>:
     orientation: "vertical"
     spacing: "12dp"
     size_hint_y: None
     height: "200dp"
-
     MDTextField:
         id: title
         hint_text: "Title"
@@ -68,13 +64,43 @@ MDScreen:
                 rgb:self.line_color_focus
             Line: 
                 width: 1.2
+                rounded_rectangle: self.x,self.y,self.width,self.height,15,15,15,15,100    
+
+
+<DialogContent>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "200dp"
+
+    MDTextField:
+        id: title
+        hint_text: "Title"
+        color_mode: 'custom'
+        theme_text_color: "Custom"
+        mode:"rectangle"
+        active_line:False
+        line_color_normal: get_color_from_hex("4b5f80")
+        radius: [15, 15, 15, 15]
+        line_color_focus: get_color_from_hex("4b5f80")
+        fill_color_normal: 1,1,1,0
+        text_color_focus:0,0,0,1
+        text_color_normal:get_color_from_hex("4b5f80")
+        hint_text_color_focus:0,0,0,1
+        multiline: False
+        text:""
+        canvas.before:
+            Color:
+                rgb:self.line_color_focus
+            Line: 
+                width: 1.2
                 rounded_rectangle: self.x,self.y,self.width,self.height,15,15,15,15,100
     MDTextField:
         id: description
         hint_text: "Description"
         color_mode: 'custom'
         theme_text_color: "Custom"
-        mode:"fill"
+        mode:"rectangle"
         active_line:False
         line_color_normal: get_color_from_hex("4b5f80")
         radius: [15, 15, 15, 15]
@@ -96,7 +122,7 @@ MDScreen:
         hint_text: "Due Date"
         color_mode: 'custom'
         theme_text_color: "Custom"
-        mode:"fill"
+        mode:"rectangle"
         active_line:False
         line_color_normal: get_color_from_hex("4b5f80")
         radius: [15, 15, 15, 15]
@@ -123,3 +149,4 @@ MDScreen:
         on_release:
             app.show_calendar()
         
+
