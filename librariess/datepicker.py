@@ -194,16 +194,16 @@ from __future__ import annotations
 
 __all__ = ("MDDatePicker", "BaseDialogPicker", "DatePickerInputField")
 
-from . import calendars
+from librariess import calendar
 import datetime
 import math
 import os
 import time
 # from datetime import date
-from itertools import zip_longest
-from typing import Union
 from persiantools.jdatetime import JalaliDate
 import jdatetime
+from itertools import zip_longest
+from typing import Union
 
 from kivy.animation import Animation
 from kivy.lang import Builder
@@ -242,7 +242,8 @@ with open(
     os.path.join(uix_path, "pickers", "datepicker", "datepicker.kv"),
     encoding="utf-8",
 ) as kv_file:
-    Builder.load_string(kv_file.read())
+    # Builder.load_string(kv_file.read())
+    Builder.load_file("librariess/datepicker.kv")
 
 
 class BaseDialogPicker(
@@ -312,7 +313,7 @@ class BaseDialogPicker(
     and defaults to `[7, 7, 7, 7]`.
     """
 
-    primary_color = ColorProperty(None)
+    primary_color = ColorProperty("purple")
     """
     Background color of toolbar in (r, g, b, a) or string format.
 
@@ -670,8 +671,7 @@ class DatePickerInputField(MDTextField):
             self.error = False
             return
         try:
-            jdatetime.date.fromgregorian(datetime.datetime.strptime(text, "%d/%m/%Y").date())
-            # datetime.datetime.strptime(text, "%d/%m/%Y")
+            datetime.datetime.strptime(text, "%d/%m/%Y")
             self.error = False
         except ValueError:
             self.error = True
@@ -770,7 +770,7 @@ class DatePickerYearSelectableItem(RecycleDataViewBehavior, MDLabel):
 #  Add a date input mask. Currently, the date is entered in the format
 #  'dd/mm/yy'. In some countries, the date is formatted as 'mm/dd/yy'.
 class MDDatePicker(BaseDialogPicker):
-    text_weekday_color = ColorProperty("purple")
+    text_weekday_color = ColorProperty(None)
     """
     Text color of weekday names in (r, g, b, a) or string format.
 
@@ -825,7 +825,7 @@ class MDDatePicker(BaseDialogPicker):
     and defaults to `0`.
     """
 
-    min_year = NumericProperty(None)
+    min_year = NumericProperty(1914)
     """
     The year of month to be opened by default. If not specified,
     the current number will be used.
@@ -834,7 +834,7 @@ class MDDatePicker(BaseDialogPicker):
     and defaults to `1914`.
     """
 
-    max_year = NumericProperty(1450)
+    max_year = NumericProperty(2121)
     """
     The year of month to be opened by default. If not specified,
     the current number will be used.
@@ -937,7 +937,7 @@ class MDDatePicker(BaseDialogPicker):
         **kwargs,
     ):
         self.today = JalaliDate.today()
-        self.calendar = calendars.Calendar(firstweekday)
+        self.calendar = calendar.Calendar(firstweekday)
         self.sel_year = year if year else self.today.year
         self.sel_month = month if month else self.today.month
         self.sel_day = day if day else self.today.day
@@ -987,11 +987,11 @@ class MDDatePicker(BaseDialogPicker):
             self.get_date_range(),
         )
 
-    def is_date_valaid(self, JalaliDate: str) -> bool:
+    def is_date_valaid(self, date: str) -> bool:
         """Checks the valid of the currently entered date."""
 
         try:
-            time.strptime(JalaliDate, "%d/%m/%Y")
+            time.strptime(date, "%d/%m/%Y")
             return True
         except ValueError:
             return False
@@ -1011,7 +1011,7 @@ class MDDatePicker(BaseDialogPicker):
 
         # Move selection to the same day and month of the selected year.
         self.sel_year = self.year
-        last_day = calendars.monthrange(self.year, self.sel_month)[1]
+        last_day = calendar.monthrange(self.year, self.sel_month)[1]
         self.sel_day = min(self.sel_day, last_day)
         self.update_calendar(self.year, self.month)
 
@@ -1123,8 +1123,7 @@ class MDDatePicker(BaseDialogPicker):
         # Widgets are arranged in the reverse order of their addition.
         for field in reversed(self._fields_container.children):
             try:
-                date = jdatetime.date.fromgregorian(datetime.datetime.strptime(field.text, "%d/%m/%Y").date())
-                # date = datetime.datetime.strptime(field.text, "%d/%m/%Y").date()
+                date = datetime.datetime.strptime(field.text, "%d/%m/%Y").date()
             except ValueError:
                 date = None
             dates.append(date)
@@ -1189,7 +1188,7 @@ class MDDatePicker(BaseDialogPicker):
         year = int(list_date[2]) if len(list_date) > 2 else self.sel_year
         month = int(list_date[1]) if len(list_date) > 1 else self.sel_month
         day = int(list_date[0]) if len(list_date) > 0 else self.sel_day
-        day = min(day, calendars.monthrange(year, month)[1])
+        day = min(day, calendar.monthrange(year, month)[1])
         self.sel_year, self.sel_month, self.sel_day = year, month, day
         self.update_calendar(year, month)
 
@@ -1202,7 +1201,7 @@ class MDDatePicker(BaseDialogPicker):
             selected_dates = {self.min_date, self.max_date}
         # The label text depends on the selected date or date range.
         self._update_date_label_text()
-        month_end = JalaliDate(year, month, calendars.monthrange(year, month)[1])
+        month_end = JalaliDate(year, month, calendar.monthrange(year, month)[1])
         dates = self.calendar.itermonthdates(year, month)
         for widget, widget_date in zip_longest(self._calendar_list, dates):
             # Only widgets whose dates are in the displayed month are visible.
@@ -1415,12 +1414,13 @@ class MDDatePicker(BaseDialogPicker):
 
     def generate_list_widgets_days(self) -> None:
         calendar_list = []
-
+        day_list=["Shanbeh","1Shanbeh","2Shanbeh","3Shanbeh","4Shanbeh","5Shanbeh","Jomeh"]
+        Day_list=["Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"]
         for day in self.calendar.iterweekdays():
             weekday_label = DatePickerWeekdayLabel(
-                text=calendars.day_name[day][0].upper(),
+                text=Day_list[day][0].upper(),
                 owner=self,
-                hint_text=calendars.day_name[day],
+                hint_text=day_list[day],
             )
             weekday_label.font_name = self.font_name
             self._calendar_layout.add_widget(weekday_label)

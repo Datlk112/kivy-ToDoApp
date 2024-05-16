@@ -95,7 +95,7 @@ month_name = _localized_month('%B')
 month_abbr = _localized_month('%b')
 
 # Constants for weekdays
-(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY) = range(7)
+(SATURDAY, SUNDAY,MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY) = range(7)
 
 
 def isleap(year):

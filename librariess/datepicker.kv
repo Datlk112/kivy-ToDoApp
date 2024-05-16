@@ -1,7 +1,10 @@
 #:import os os
 #:import date datetime.date
+#:import JalaliDate persiantools.jdatetime
 
-#:import calendars calendars
+#:set months_list ['Farvardin','Ordibehesht','Khordad','Tir','Mordad','Shahrivar','Mehr','Aban','Azar','Dey','Bahman','Esfand',]
+#:set day_list ["Shanbeh","1Shanbeh","2Shanbeh","4Shanbeh","5Shanbeh","jomeh"]
+#:import calendar librariess.calendar
 #:import platform platform
 #:import Clock kivy.clock.Clock
 #:import images_path kivymd.images_path
@@ -152,7 +155,7 @@
             -text_size: None, None
             theme_text_color: "Custom"
             adaptive_size: True
-            text: calendars.month_name[root.month].capitalize() + " " + str(root.year)
+            text: months_list[root.month-1].capitalize() + " " + str(root.year)
             font_name: root.font_name
             pos:
                 (dp(24), root.height - dp(120) - self.height - dp(20)) \
@@ -304,7 +307,7 @@
             rgba:
                 root.owner.selector_color or self.theme_cls.primary_color \
                 if root.is_selected and not self.disabled \
-                else (0.8, 0.8, 0.8, 1)
+                else (0, 0, 0, 0)
         Ellipse:
             size:
                 (dp(42), dp(42)) \
