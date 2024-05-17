@@ -1309,7 +1309,7 @@ class MDDatePicker(BaseDialogPicker):
             selected_date = JalaliDate(self.sel_year, self.sel_month, self.sel_day)
             if input_dates:
                 selected_date = input_dates[0] or selected_date
-            weekday_repr = selected_date.strftime("%a").capitalize()
+            weekday_repr = selected_date.strftime("%A").capitalize()
             separator = ", " if horizontal else ",\n"
             return weekday_repr + separator + date_repr(selected_date)
         elif self.mode == "range":

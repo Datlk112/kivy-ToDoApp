@@ -74,7 +74,8 @@
             width: root.width
             adaptive_height: True
             text: root.title
-            font_name: root.font_name
+            font_name: "assets/fonts/Itim-Regular.ttf"
+            # font_name: root.font_name
             pos:
                 (dp(24), root.height - self.height - dp(18)) \
                 if root.theme_cls.device_orientation == "portrait" \
@@ -88,7 +89,8 @@
             size_hint_x: None
             width: root.width
             adaptive_height: True
-            font_name: root.font_name
+            # font_name: root.font_name
+            font_name: "assets/fonts/Caveat-VariableFont_wght.ttf"
             markup: True
             pos:
                 (dp(24), root.height - dp(120) + dp(18)) \
@@ -130,24 +132,24 @@
                 size_hint_y: None
                 height: self.minimum_height
 
-        MDIconButton:
-            id: edit_icon
-            icon: "pencil"
-            icon_size: "24sp"
-            theme_icon_color: "Custom"
-            on_release:
-                root.transformation_to_dialog_input_date() \
-                if not root._input_date_dialog_open else \
-                Clock.schedule_once(root.transformation_from_dialog_input_date, .15)
-            x:
-                (root.width - self.width - dp(12)) \
-                if root.theme_cls.device_orientation == "portrait" \
-                else dp(12)
-            y:
-                (root.height - dp(120) + dp(12)) \
-                if root.theme_cls.device_orientation == "portrait" \
-                else  dp(12)
-            text_color: root.text_toolbar_color or root.specific_text_color
+        # MDIconButton:
+        #     id: edit_icon
+        #     icon: "pencil"
+        #     icon_size: "24sp"
+        #     theme_icon_color: "Custom"
+        #     on_release:
+        #         root.transformation_to_dialog_input_date() \
+        #         if not root._input_date_dialog_open else \
+        #         Clock.schedule_once(root.transformation_from_dialog_input_date, .15)
+        #     x:
+        #         (root.width - self.width - dp(12)) \
+        #         if root.theme_cls.device_orientation == "portrait" \
+        #         else dp(12)
+        #     y:
+        #         (root.height - dp(120) + dp(12)) \
+        #         if root.theme_cls.device_orientation == "portrait" \
+        #         else  dp(12)
+        #     text_color: root.text_toolbar_color or root.specific_text_color
 
         MDLabel:
             id: label_month_selector
@@ -156,7 +158,8 @@
             theme_text_color: "Custom"
             adaptive_size: True
             text: months_list[root.month-1].capitalize() + " " + str(root.year)
-            font_name: root.font_name
+            # font_name: root.font_name
+            font_name: "assets/fonts/PoetsenOne-Regular.ttf"
             pos:
                 (dp(24), root.height - dp(120) - self.height - dp(20)) \
                 if root.theme_cls.device_orientation == "portrait" \
@@ -320,7 +323,8 @@
         size_hint_x: None
         halign: "center"
         text: root.text
-        font_name: root.owner.font_name
+        font_name: "assets/fonts/PoetsenOne-Regular.ttf"
+        # font_name: root.owner.font_name
         theme_text_color: "Custom"
         text_color:
             root.owner.accent_color or root.theme_cls.bg_normal \
