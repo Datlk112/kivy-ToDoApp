@@ -7,7 +7,6 @@ from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.button import MDFlatButton,MDIconButton,MDFloatingActionButton
 from kivymd.uix.relativelayout import MDRelativeLayout
@@ -18,6 +17,15 @@ from kivymd.uix.menu import MDDropdownMenu
 from persiantools.jdatetime import JalaliDate
 from kivymd.uix.selectioncontrol import MDCheckbox,MDSwitch
 from kivymd.uix.label import MDLabel
+from kivymd.uix.card import MDCard
+from kivy.properties import StringProperty
+from kivy.core.window import Window
+from typing import Union
+from kivy.clock import Clock
+from kivy.core.window.window_sdl2 import WindowSDL
+from kivymd.uix.scrollview import MDScrollView
+
+
 # from pcalender.datepicker_fa import DatePickerFa
 
 
@@ -29,7 +37,9 @@ class DialogContent(MDBoxLayout):
 
 
 
-
+class MD3Card(MDCard):
+    text = StringProperty()
+    subtext = StringProperty()
 
 class ToDoApp(MDApp):
     dialogs = None
@@ -44,6 +54,7 @@ class ToDoApp(MDApp):
         screen = Builder.load_file("todo.kv")
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Blue"
+        self.theme_cls.material_style = "M3"
 
         layout = MDFloatLayout()  # root layout
         # Creating control buttons.
@@ -70,6 +81,15 @@ class ToDoApp(MDApp):
                 )
             )
 
+        
+        #Create MDCARD
+        # styles = {
+        #     "elevated": "#f6eeee", "filled": "#f4dedc", "outlined": "#f8f5f4"
+        # }
+        
+
+            
+            
         # Create a table.
         self.data_tables = MDDataTable(
             pos_hint={"center_y": 0.48, "center_x": 0.5},
@@ -83,13 +103,90 @@ class ToDoApp(MDApp):
                 ("Due Date", dp(25)),
   
             ],
-            row_data=[("1", "1", "2","3")],
+            row_data=[("1", "1", "2","3"),
+                      ("2", "2", "3","4"),
+                      ("3","HEllp","HEre is test for my MDCard","4"),
+                      ("1", "1", "2","3"),
+                      ("2", "2", "3","4"),
+                      ("3","HEllp","HEre is test for my MDCard","4"),
+                      ("1", "1", "2","3"),
+                      ("2", "2", "3","4"),
+                      ("3","HEllp","HEre is test for my MDCard","4"),
+                      ("1", "1", "2","3"),
+                      ("2", "2", "3","4"),
+                      ("3","HElحححححlp","HEre is test for my MDCard","4"),],
+            
         )
         self.data_tables.bind(on_check_press=self.on_check_press)
         # Adding a table and buttons to the toot layout.
         # screen.add_widget(button_box)
+        # scroll_dash = self.root.ids.scrollDash
+        # scroll_view = MDScrollView()
+        # scroll_view.bar_width = "10dp"
+
+        # ایجاد یک MDBoxLayout برای قرار دادن کارت‌ها
+        cards_layout = MDBoxLayout(orientation='vertical', spacing=10, size_hint_y=None , padding = [10,10]  )
+        scroll = MDScrollView(do_scroll_y = True , do_scroll_x = False , scroll_x = 0 , scroll_y = 1 , bar_width = "10dp")
+
+        for data in self.data_tables.row_data:
+            
+            
+            card = MD3Card(
+                size_hint=(None, None),
+                size=(Window.width-20, dp(100)),  # تنظیم عرض هر کارت برابر با عرض صفحه و ارتفاع 100dp
+                md_bg_color="#f4dedc",
+                shadow_softness=2,
+                shadow_offset=(0, 1),
+            )
+            
+            card_layout = MDBoxLayout(
+                orientation="vertical",  # تعیین جهت عمودی برای MDBoxLayout
+                spacing=dp(40),
+                padding=[5,5,5,5]
+
+                # تعیین فاصله بین المان‌ها به 10dp
+            )
+            
+            label1 = MDLabel(
+                text=data[1],
+                color="grey",
+                bold=True,
+                adaptive_size=True,
+            )
+            
+            label2 = MDLabel(
+                text=data[2],
+                color="grey",
+                bold=True,
+                font_style="Caption",
+                adaptive_size=True,
+            )
+            
+            card_layout.add_widget(label1)
+            card_layout.add_widget(label2)
+            
+            card.add_widget(card_layout)
+            
+            cards_layout.add_widget(card)
+            
+        scroll.add_widget(cards_layout)
 
         
+        screen.ids.scrollDash.add_widget(scroll)
+        
+        # for data in self.data_tables.row_data:
+        #     print(data)
+        #     screen.ids.scrollDash.add_widget(
+        #         MD3Card(
+        #             line_color=(0.2, 0.2, 0.2, 0.8),
+        #             style="elevated",
+        #             text=data[1],
+        #             subtext= data[2],
+        #             md_bg_color="#f4dedc",
+        #             shadow_softness=2,
+        #             shadow_offset=(0, 1), 
+        #         )
+        #     )
 
     
         
@@ -97,7 +194,8 @@ class ToDoApp(MDApp):
         screen.ids.table_holder.add_widget(button_box)
         return screen
     
-    
+            
+            
     def on_button_press(self, instance_button: MDRaisedButton) -> None:
         '''Called when a control button is clicked.'''
 
@@ -461,19 +559,22 @@ class ToDoApp(MDApp):
         self.show_confirmation_dialog()
 
     def remove_row(self) -> None:
-        if len(self.data_tables.row_data) > 1:
-            print(self.data_tables.row_data)
-            selected_row_index = self.data_tables.row_data.index(tuple(self.selected_rows[-1]))
-            print(selected_row_index)
-            self.data_tables.remove_row(self.data_tables.row_data[selected_row_index])
-            self.selected_rows.clear()
-            try:
-                self.selected_rows.append(self.data_tables.row_data[selected_row_index])
-            except Exception as e:
-                print(f"{e}")
-            
-        else: 
-            self.data_tables.remove_row(self.data_tables.row_data[0])
+        try:
+            if len(self.data_tables.row_data) > 1:
+                print(self.data_tables.row_data)
+                selected_row_index = self.data_tables.row_data.index(tuple(self.selected_rows[-1]))
+                print(selected_row_index)
+                self.data_tables.remove_row(self.data_tables.row_data[selected_row_index])
+                self.selected_rows.clear()
+                try:
+                    self.selected_rows.append(self.data_tables.row_data[selected_row_index])
+                except Exception as e:
+                    print(f"{e}")
+                
+            else: 
+                self.data_tables.remove_row(self.data_tables.row_data[0])
+        except Exception as e:
+            print(f"{e}")
     
 ToDoApp().run()
 

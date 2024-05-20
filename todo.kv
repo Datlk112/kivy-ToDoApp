@@ -5,13 +5,39 @@ MDScreen:
         panel_color: (0.8, 0.8, 0.8, 0.5)
         font_name: "assets/fonts/Itim-Regular.ttf"
         MDBottomNavigationItem:
-            name: 'screen 1'
-            text: 'Mail'
+            name: 'Dashboard'
+            text: 'Dashboard'
             icon: 'gmail'
-            badge_icon: "numeric-10"
-            MDLabel:
-                text: 'Screen 1'
-                halign: 'center'
+            # badge_icon: "numeric-10"
+            MDBoxLayout:
+                orientation: "vertical"
+                # spacing:10
+                id:scrollDash
+                # size_hint_y:"100dp"
+                # MDFloatLayout:
+                
+                #     size_hint_y: .1
+                #     height:"40dp"
+                MDTopAppBar:
+                    title: "Dashboard"
+                    md_bg_color:get_color_from_hex("273854")
+                # MDScrollView:
+                #     do_scroll_y: True
+                #     MDBoxLayout:
+                        
+                #         padding: [10, 10]
+                        
+                #         # cols:1
+                #         # height: self.minimum_height  # تنظیم ارتفاع بر اساس حداقل ارتفاع ممکن
+                #         # valign: 'top' 
+                #         spacing:10
+                #         orientation: "vertical"
+                #         size_hint_x:1
+                #         # adaptive_height:True
+                
+            
+                
+                
 
         MDBottomNavigationItem:
             text: 'To Do'
@@ -39,33 +65,33 @@ MDScreen:
 
     
 
-<DialogCont>:
-    orientation: "vertical"
-    spacing: "12dp"
-    size_hint_y: None
-    height: "200dp"
-    MDTextField:
-        id: title
-        hint_text: "Title"
-        color_mode: 'custom'
-        theme_text_color: "Custom"
-        mode:"fill"
-        active_line:False
-        line_color_normal: get_color_from_hex("4b5f80")
-        radius: [15, 15, 15, 15]
-        line_color_focus: get_color_from_hex("4b5f80")
-        fill_color_normal: 1,1,1,0
-        text_color_focus:0,0,0,1
-        text_color_normal:get_color_from_hex("4b5f80")
-        hint_text_color_focus:0,0,0,1
-        multiline: False
-        text:""
-        canvas.before:
-            Color:
-                rgb:self.line_color_focus
-            Line: 
-                width: 1.2
-                rounded_rectangle: self.x,self.y,self.width,self.height,15,15,15,15,100    
+# <DialogCont>:
+#     orientation: "vertical"
+#     spacing: "12dp"
+#     size_hint_y: None
+#     height: "200dp"
+#     MDTextField:
+#         id: title
+#         hint_text: "Title"
+#         color_mode: 'custom'
+#         theme_text_color: "Custom"
+#         mode:"fill"
+#         active_line:False
+#         line_color_normal: get_color_from_hex("4b5f80")
+#         radius: [15, 15, 15, 15]
+#         line_color_focus: get_color_from_hex("4b5f80")
+#         fill_color_normal: 1,1,1,0
+#         text_color_focus:0,0,0,1
+#         text_color_normal:get_color_from_hex("4b5f80")
+#         hint_text_color_focus:0,0,0,1
+#         multiline: False
+#         text:""
+#         canvas.before:
+#             Color:
+#                 rgb:self.line_color_focus
+#             Line: 
+#                 width: 1.2
+#                 rounded_rectangle: self.x,self.y,self.width,self.height,15,15,15,15,100    
 
 
 <DialogContent>:
@@ -150,4 +176,30 @@ MDScreen:
         on_release:
             app.show_calendar()
         
+
+
+# <MD3Card>:
+#     padding: 4
+#     size_hint: None, None
+#     size: "1000dp", "100dp"
+#     text:""
+#     # subtext:""
+#     MDRelativeLayout:
+#         MDIconButton:
+#             icon: "dots-vertical"
+#             pos_hint: {"top": 1, "right": 1}
+#         MDBoxLayout:
+#             orientation: "vertical"
+#             size_hint_x:None
+#             MDLabel:
+#                 text:root.text
+#                 text: root.text
+#                 adaptive_size: True
+#                 color: "grey"
+#                 pos: "12dp", "12dp"
+#                 bold: True
+#             MDLabel:
+#                 halign:"center"
+#                 font_style:"Caption"
+#                 text:root.subtext 
 
