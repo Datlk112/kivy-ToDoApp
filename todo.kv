@@ -11,11 +11,13 @@ MDScreen:
                 id: table_holder
                 MDSegmentedControl:
                     pos_hint: {"center_x": .5, "center_y": .9}
+                    on_active: app.segment_control(*args)
                     MDSegmentedControlItem:
                         text: "All tasks"
 
                     MDSegmentedControlItem:
                         text: "Completed tasks"
+                        
 
 
         MDBottomNavigationItem:
@@ -28,6 +30,9 @@ MDScreen:
                 orientation: "vertical"
                 
                 MDTopAppBar:
+                    size_hint_max_y:'50dp'
+                    # size_hint_y: None
+                    # height: self.texture_size[1] 
                     title: "Dashboard"
                     md_bg_color:get_color_from_hex("273854")
                 MDRelativeLayout:

@@ -5,6 +5,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.metrics import dp
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.textfield import MDTextField
@@ -27,10 +28,16 @@ from kivy.core.window.window_sdl2 import WindowSDL
 from kivymd.uix.scrollview import MDScrollView
 from kivy.uix.scrollview import ScrollView
 import humanize
+from kivymd.uix.segmentedcontrol import (
+    MDSegmentedControl, MDSegmentedControlItem
+)
+from kivy.utils import platform
+from kivymd.toast import toast 
 
-
-# from pcalender.datepicker_fa import DatePickerFa
-
+# If keyboard is going on the text boxes
+Window.keyboard_anim_args = {'d':.2 , 't':'in_out_expo'}
+Window.softinput_mode = "below_target"
+Window.keyboard = 'numeric'
 
 class DialogContent(MDBoxLayout):
     orientation= "vertical",
@@ -50,6 +57,9 @@ class ToDoApp(MDApp):
 
     def __init__(self, **kwargs):
         self.selected_rows = []
+        self.all_data_list = []
+        self.Done_data_list = []
+        self.n = 0
         super().__init__(**kwargs)
         
     def build(self):
@@ -100,12 +110,17 @@ class ToDoApp(MDApp):
             ],
             row_data=[("1","Hi","Welcome",'1403-03-03',"True","True")
                       ,("2","Hi","Welcome",'1403-03-02',"False","True")
+                      ,("3","fciii","Welcomeeee",'1403-03-04',"False","False")
+                      ,("4","Hi","Welcome",'1403-03-02',"False","True")
+                      ,("5","fciiii","Welcomeeee",'1403-03-04',"False","False")
+                      ,("6","Hi","Welcome",'1403-03-02',"False","True")
+                      ,("7","fci","Welcomeeee",'1403-03-04',"False","False")
                       ],
             
         )
         self.data_tables.bind(on_check_press=self.on_check_press)
-        self.cards_layout = MDBoxLayout(orientation='vertical', spacing=10,  padding = [10,10]  , size_hint_min_y= Window.height ,top=20 )
-        self.scroll = MDScrollView(do_scroll_y = True , do_scroll_x = False  , bar_width = "4dp")
+        self.cards_layout = MDGridLayout(cols=1, spacing=10,  padding = [10,10]  , size_hint_min_y= dp(100)*len(self.data_tables.row_data) + dp(200), top=20 )
+        self.scroll = MDScrollView(do_scroll_y = True , bar_width = "4dp", size=(Window.width, 1) , always_overscroll=True)
 
         today = MDLabel(
                 text="Today Tasks",
@@ -155,7 +170,6 @@ class ToDoApp(MDApp):
                     spacing=dp(40),
                     padding=[15,0,0,15]
 
-
                 )
                 
                 label1 = MDLabel(
@@ -189,12 +203,9 @@ class ToDoApp(MDApp):
                     pos_hint={"top": .25, "right": .98},
                     
                 )
-                
+                     
                 card_layout.add_widget(label1)
                 card_layout.add_widget(label2)
-                
-                # card.add_widget(card_layout)
-                
                 rel.add_widget(myicon)
                 rel.add_widget(label3)
                 rel.add_widget(card_layout)
@@ -312,11 +323,52 @@ class ToDoApp(MDApp):
         self.screen.ids.table_holder.add_widget(button_box)
         return self.screen
     
+    def segment_control(
+                            self,
+        segmented_control: MDSegmentedControl,
+        segmented_item: MDSegmentedControlItem,
+    ) -> None:
+        # print(segmented_item.text)
+        '''Called when the segment is activated.'''
+        
+        print(self.n)
+        try:
+            if self.data_tables.row_data :
+                
+                filter_type = segmented_item.text
+                print(filter_type)
+                if self.n == 0 :
+                    for data in self.data_tables.row_data:
+                        self.all_data_list.append(data)
+                        self.Done_data_list.append(data)
+                    print(self.all_data_list)
+                    print(self.Done_data_list)
+                
+                if filter_type == "All tasks":
+                    for row_data in self.all_data_list:
+                        self.data_tables.add_row(row_data)
+                elif filter_type == "Completed tasks":
+                    print("HI")
+                    self.data_tables.row_data.clear()
+                    for row_data in self.Done_data_list:
+                        if row_data[5] == "True":
+                            self.data_tables.add_row(row_data)
+                            self.Done_data_list.remove(row_data)
+                        else:
+                            pass
+                self.n += 1 
 
+            else:
+                print("data table is empty!")
+        
+        except Exception as e :
+            print(f"{e}")
+            
 
     def update_cards(self, new_data):
         self.cards_layout.clear_widgets()
         self.scroll.clear_widgets()
+        self.cards_layout.size_hint_min_y= dp(100)*len(self.data_tables.row_data) + dp(200)
         todayy = MDLabel(
                 text="Today Tasks",
                 color="grey",
@@ -721,13 +773,18 @@ class ToDoApp(MDApp):
         )
         self.Important_label = MDLabel(text = "Prioritised" , font_name ="assets/fonts/Itim-Regular.ttf" ,font_style = "Subtitle1" , halign="left", size= ("10dp", "48dp"))
 
-        self.Important_checkk = MDCheckbox(size_hint= (None, None) ,size= ("48dp", "48dp"),color_inactive= "gray")
+        self.Important_checkk = MDCheckbox(size_hint= (None, None) ,size= ("48dp", "48dp"),color_inactive= "gray",)
         priority_layout = MDBoxLayout(orientation='horizontal', size_hint_x=.2, adaptive_height=True, )
         
         
         priority_layout.add_widget(self.Important_checkk)
         priority_layout.add_widget(self.Important_label)
         
+        
+        if current_row[4] == "True":
+            self.Important_checkk.active = True
+        else:
+            self.Important_checkk.active = False
         self.Title_Field_edit.text = current_row[1]
         self.Description_Field_edit.text = current_row[2]
         self.Date_Field_edit.text = current_row[3]
@@ -784,6 +841,7 @@ class ToDoApp(MDApp):
         pass
 
     def show_calendar(self, *args):
+        """ This section is for showing datepicker for adding datas (Notice that its not common kivymd date picker and i changed it to jalali date picker)"""
         date_dialog = MDDatePicker(min_year=JalaliDate.today().year,min_date=JalaliDate.today(),max_year=JalaliDate.today().year+10,title_input="EDIT DATE",radius=[7, 7, 7, 26],primary_color="purple")
         date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
         date_dialog.open()
@@ -815,6 +873,7 @@ class ToDoApp(MDApp):
         pass
 
     def show_calendars(self, *args):
+        """ This section is for showing datepicker for edit datas (Notice that its not common kivymd date picker and i changed it to jalali date picker)"""
         date_dialog = MDDatePicker(min_year=JalaliDate.today().year,min_date=JalaliDate.today(),max_year=JalaliDate.today().year+10,title_input="SET DATE",radius=[7, 7, 7, 26],primary_color="purple")
         date_dialog.bind(on_save=self.on_saves, on_cancel=self.on_cancels)
         date_dialog.open()
@@ -822,9 +881,8 @@ class ToDoApp(MDApp):
         
         
     def add_row(self, *args):
+        """ This section is for adding row in the last line of datatable"""
         try: 
-            # title = self.dialog.content_cls.ids.title.text
-            # Date = self.dialog.content_cls.ids.Date.text
             title = self.Title_Field.text
             Date = self.Date_Field.text
             Priority = "False"
@@ -833,9 +891,9 @@ class ToDoApp(MDApp):
                 Priority = "True"
             else :
                 Priority = "False"
-            if len(self.data_tables.row_data) > 0 :
+            if len(self.data_tables.row_data) > 0 :      #Checking if we have data in table (number1)
                 last_num_row = int(self.data_tables.row_data[-1][0])
-            else :
+            else :                                       #Checking if we have not data in table 
                 last_num_row = 0
             if self.Description_Field.text == "":
                 self.data_tables.add_row((str(last_num_row + 1), f"{title}", "_" , f"{Date}") , f"{Priority}" , f"{Done}")
@@ -860,17 +918,15 @@ class ToDoApp(MDApp):
             
         print(instance_table, self.selected_rows)
         
+        
     def edit_row(self, **args ):
-    # Implement the edit functionality here
+        """ This section is a function that showing edit dialog with sending row index and row-data"""
         try:
             row = self.selected_rows[-1]
             print(self.data_tables.row_data)
             selected_row_index = self.data_tables.row_data.index(tuple(self.selected_rows[-1]))
             print(selected_row_index)
             print(row)
-            # self.Title_Field_edit.text = row[1]
-            # self.Description_Field_edit.text = row[2]
-            # self.Date_Field_edit.text = row[3]
             self.show_edit_dialog(current_row=row, row_index=selected_row_index)
         except Exception as e:
             print(self.data_tables.row_data)
@@ -878,9 +934,10 @@ class ToDoApp(MDApp):
         
         
     def edit_data(self ,instance_button, **args ):
+        """ This section is for editing data and working by update_row() method in datatables.py"""
         try: 
-            Priority = "False"
-            Done = "False"
+
+            
             if self.Important_checkk.active:
                 Priority = "True"
             else :
@@ -891,17 +948,21 @@ class ToDoApp(MDApp):
             date = self.Date_Field_edit.text
             
             num = self.data_tables.row_data[selected_row_index][0]
+            Done = self.data_tables.row_data[selected_row_index][5]
             if self.Description_Field_edit.text == "":
                 description = "_"
                 
             else:
                 description = self.Description_Field_edit.text
+            """
+            Here is main function to change datas text in table 
+            """
             self.data_tables.update_row(
                 self.data_tables.row_data[selected_row_index],  # old row data
                 [num,title,description,date,Priority,Done],          # new row data
             )
             self.selected_rows.clear()
-            self.dialog.dismiss()
+            self.dialog.dismiss()  # Closing the dialog
             self.dialogs = None
             self.dialoggs = None
             self.Title_Field_edit.text = ""
@@ -917,21 +978,24 @@ class ToDoApp(MDApp):
         self.show_confirmation_dialog()
 
     def remove_row(self) -> None:
+        """ This section is for a function to remove row
+            First of all we should find the selection checkbox index row to remove it row """
         try:
-            if len(self.data_tables.row_data) > 1:
+            if len(self.data_tables.row_data) > 1:  #If we have more than one tasks in table
                 print(self.data_tables.row_data)
                 selected_row_index = self.data_tables.row_data.index(tuple(self.selected_rows[-1]))
                 print(selected_row_index)
-                self.data_tables.remove_row(self.data_tables.row_data[selected_row_index])
+                self.data_tables.remove_row(self.data_tables.row_data[selected_row_index]) # Main remove section
                 self.selected_rows.clear()
-                self.update_cards(new_data=self.data_tables.row_data)
+                self.update_cards(new_data=self.data_tables.row_data)  # this is for updating card in dashboard
+                
                 try:
-                    self.selected_rows.append(self.data_tables.row_data[selected_row_index])
+                    self.selected_rows.append(self.data_tables.row_data[selected_row_index])  # Its because of checkbox doesnt delete after removing row and it checked so I write this line to change it to next line and person can uncheck that
                 except Exception as e:
                     print(f"{e}")
                 
             else: 
-                self.data_tables.remove_row(self.data_tables.row_data[0])
+                self.data_tables.remove_row(self.data_tables.row_data[0]) # If we have only on task in table
         except Exception as e:
             print(f"{e}")
     
@@ -952,8 +1016,10 @@ For tomarrow i should do these changes to my app:
 5.Adding a sqllite Database to my app
 6.changing the texts fonts / DONE!
 7.make the lottie file for presplash screen
-8.Make filters settings 
+8.Make filters segments settings / DONE! But it has bugs maybe i delete it
 9.make Prioroty sections in md dialog / DONE!
 10.make one screen to list items like they are listed by : tomarrow,today or ...   / ALMOST DONE!  
+11.writing comments for each sections
+12.Adding toasts for error handleres
 """
 ##############
