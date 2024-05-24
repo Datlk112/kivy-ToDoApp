@@ -283,7 +283,7 @@ class BaseDialogPicker(
     and defaults to `INPUT DATE`.
     """
 
-    title = StringProperty("SET DATE")
+    title = StringProperty()
     """
     Dialog title fot select date.
 

@@ -33,6 +33,7 @@ from kivymd.uix.segmentedcontrol import (
 )
 from kivy.utils import platform
 from kivymd.toast import toast 
+import sqlite3
 
 # If keyboard is going on the text boxes
 Window.keyboard_anim_args = {'d':.2 , 't':'in_out_expo'}
@@ -68,6 +69,20 @@ class ToDoApp(MDApp):
         # screen = Builder.load_file("todo.kv")
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Blue"
+        """ Creating DataBase or connect to one """
+        conn = sqlite3.connect("Taks.db")
+        c = conn.cursor()
+        c.execute("""CREATE TABLE if not exists tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Num INTEGER NOT NULL,
+            Title VARCHAR(255) NOT NULL,
+            Description VARCHAR(255) NULL,
+            DueDate datetime NOT NULL,
+            Priority boolean NOT NULL DEFAULT 'False',
+            Done VARCHAR(255) NOT NULL DEFAULT 'False'
+        )""")
+        conn.commit()
+        conn.close()
 
         layout = MDFloatLayout()  # root layout
         # Creating control buttons.
@@ -108,16 +123,24 @@ class ToDoApp(MDApp):
                 ("Done", dp(15)),
   
             ],
-            row_data=[("1","Hi","Welcome",'1403-03-03',"True","True")
-                      ,("2","Hi","Welcome",'1403-03-02',"False","True")
-                      ,("3","fciii","Welcomeeee",'1403-03-04',"False","False")
-                      ,("4","Hi","Welcome",'1403-03-02',"False","True")
-                      ,("5","fciiii","Welcomeeee",'1403-03-04',"False","False")
-                      ,("6","Hi","Welcome",'1403-03-02',"False","True")
-                      ,("7","fci","Welcomeeee",'1403-03-04',"False","False")
+            row_data=[
+                    #   ,("2","Hi","Welcome",'1403-03-02',"False","True")
+                    #   ,("3","fciii","Welcomeeee",'1403-03-04',"False","False")
+                    #   ,("4","Hi","Welcome",'1403-03-02',"False","True")
+                    #   ,("5","fciiii","Welcomeeee",'1403-03-04',"False","False")
+                    #   ,("6","Hi","Welcome",'1403-03-02',"False","True")
+                    #   ,("7","fci","Welcomeeee",'1403-03-04',"False","False")
                       ],
             
         )
+        conn = sqlite3.connect("Taks.db")
+        c = conn.cursor()
+        sql = f""" SELECT * FROM tasks"""
+        c.execute(sql)
+        ids = c.fetchall()
+        for id in ids :
+            self.data_tables.row_data.append([str(id[0]),id[2],id[3],id[4],id[5],id[6]])
+        
         self.data_tables.bind(on_check_press=self.on_check_press)
         self.cards_layout = MDGridLayout(cols=1, spacing=10,  padding = [10,10]  , size_hint_min_y= dp(100)*len(self.data_tables.row_data) + dp(200), top=20 )
         self.scroll = MDScrollView(do_scroll_y = True , bar_width = "4dp", size=(Window.width, 1) , always_overscroll=True)
@@ -129,7 +152,8 @@ class ToDoApp(MDApp):
                 font_style="H5",
                 bold=True,
                 adaptive_size=True,
-                font_name = "assets/fonts/SedanSC-Regular.ttf")
+                font_name = "assets/fonts/Itim-Regular.ttf"
+                )
         self.cards_layout.add_widget(today)
         for data in self.data_tables.row_data:
             datee = data[3].split("-")
@@ -328,41 +352,51 @@ class ToDoApp(MDApp):
         segmented_control: MDSegmentedControl,
         segmented_item: MDSegmentedControlItem,
     ) -> None:
-        # print(segmented_item.text)
+        """ 
+        This section was for sehment selection for filtering datas
+        It has bug that after 3  or 4 times selection it will not show anything in table
+        """
         '''Called when the segment is activated.'''
         
         print(self.n)
         try:
+            conn = sqlite3.connect("Taks.db")
+            c = conn.cursor()
+            sql2 = f""" SELECT * FROM tasks """
+            c.execute(sql2)
+            all = c.fetchall()
+            sql3 = f""" SELECT * FROM tasks WHERE Done = 'True' """
+            c.execute(sql3)
+            Done = c.fetchall()
             if self.data_tables.row_data :
                 
                 filter_type = segmented_item.text
-                print(filter_type)
-                if self.n == 0 :
-                    for data in self.data_tables.row_data:
-                        self.all_data_list.append(data)
-                        self.Done_data_list.append(data)
-                    print(self.all_data_list)
-                    print(self.Done_data_list)
-                
                 if filter_type == "All tasks":
-                    for row_data in self.all_data_list:
-                        self.data_tables.add_row(row_data)
+                    list_all = []
+                    for id in all :
+                        list_all.append([str(id[0]),id[2],id[3],id[4],id[5],id[6]])
+                        self.data_tables.row_data = list_all
                 elif filter_type == "Completed tasks":
                     print("HI")
-                    self.data_tables.row_data.clear()
-                    for row_data in self.Done_data_list:
-                        if row_data[5] == "True":
-                            self.data_tables.add_row(row_data)
-                            self.Done_data_list.remove(row_data)
-                        else:
-                            pass
-                self.n += 1 
+                    list_done = []
+                    for id in Done :
+                        list_done.append([str(id[0]),id[2],id[3],id[4],id[5],id[6]])
+                        self.data_tables.row_data = list_done
+
 
             else:
                 print("data table is empty!")
+                if platform == 'android':
+                    toast("Table is empty!",gravity=80 ,length_long = 1.5)
+                else:
+                    toast("Table is empty!", duration=1.5 ,background=[1,0,0,1])
         
         except Exception as e :
             print(f"{e}")
+            if platform == 'android':
+                toast("Please try again!",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Please try again!", duration=1.5 ,background=[1,0,0,1])
             
 
     def update_cards(self, new_data):
@@ -567,16 +601,33 @@ class ToDoApp(MDApp):
             
     def Done(self,data):
         """ Here is a function for checking the done button in dashboard """
-        selected_row_index = self.data_tables.row_data.index(data)
-        num,title,description,date,Priority=data[0],data[1],data[2],data[3],data[4]
-        Done = "False" if data[5]=="True" else "True"
-        self.data_tables.update_row(
-                self.data_tables.row_data[selected_row_index],  # old row data
-                [num,title,description,date,Priority,Done],          # new row data
-            )
-        
-        self.update_cards(new_data=self.data_tables.row_data)
-        
+        try:
+            print(f"data = {data}")
+            print(self.data_tables.row_data)
+            conn = sqlite3.connect("Taks.db")
+            c = conn.cursor()
+            selected_row_index = self.data_tables.row_data.index(data)
+            num,title,description,date,Priority=data[0],data[1],data[2],data[3],data[4]
+            Done = str("False") if data[5]=="True" else str("True")
+            sql = f'''UPDATE tasks SET Done = '{Done}' WHERE id = {num}'''
+            c.execute(sql)
+            conn.commit()
+            conn.close()
+            self.data_tables.update_row(
+                    self.data_tables.row_data[selected_row_index],  # old row data
+                    [num,title,description,date,Priority,Done],          # new row data
+                )
+            if platform == 'android':
+                toast("Your task was completed!",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Your task was completed!", duration=1.5 ,background=[1,0,0,1])
+            self.update_cards(new_data=self.data_tables.row_data)
+        except Exception as e:
+            print(f"{e}")
+            if platform == 'android':
+                toast("Please try again!",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Please try again!", duration=1.5 ,background=[1,0,0,1])    
             
     def on_button_press(self, instance_button: MDRaisedButton) -> None:
         '''Called when a control button is clicked.'''
@@ -842,7 +893,7 @@ class ToDoApp(MDApp):
 
     def show_calendar(self, *args):
         """ This section is for showing datepicker for adding datas (Notice that its not common kivymd date picker and i changed it to jalali date picker)"""
-        date_dialog = MDDatePicker(min_year=JalaliDate.today().year,min_date=JalaliDate.today(),max_year=JalaliDate.today().year+10,title_input="EDIT DATE",radius=[7, 7, 7, 26],primary_color="purple")
+        date_dialog = MDDatePicker(min_year=JalaliDate.today().year,min_date=JalaliDate.today(),max_year=JalaliDate.today().year+10,title="SET DATE",radius=[7, 7, 7, 26],primary_color="purple")
         date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
         date_dialog.open()
         
@@ -874,7 +925,7 @@ class ToDoApp(MDApp):
 
     def show_calendars(self, *args):
         """ This section is for showing datepicker for edit datas (Notice that its not common kivymd date picker and i changed it to jalali date picker)"""
-        date_dialog = MDDatePicker(min_year=JalaliDate.today().year,min_date=JalaliDate.today(),max_year=JalaliDate.today().year+10,title_input="SET DATE",radius=[7, 7, 7, 26],primary_color="purple")
+        date_dialog = MDDatePicker(min_year=JalaliDate.today().year,min_date=JalaliDate.today(),max_year=JalaliDate.today().year+10,title="EDIT DATE",radius=[7, 7, 7, 26],primary_color="purple")
         date_dialog.bind(on_save=self.on_saves, on_cancel=self.on_cancels)
         date_dialog.open()
 
@@ -893,20 +944,40 @@ class ToDoApp(MDApp):
                 Priority = "False"
             if len(self.data_tables.row_data) > 0 :      #Checking if we have data in table (number1)
                 last_num_row = int(self.data_tables.row_data[-1][0])
-            else :                                       #Checking if we have not data in table 
+            else :                                       #Checking if we have not data in table
                 last_num_row = 0
             if self.Description_Field.text == "":
                 self.data_tables.add_row((str(last_num_row + 1), f"{title}", "_" , f"{Date}") , f"{Priority}" , f"{Done}")
             else:
                 description = self.Description_Field.text
                 self.data_tables.add_row((str(last_num_row + 1), f"{title}", f"{description}" , f"{Date}" , f"{Priority}" , f"{Done}" ))
+            """ Openning sql connection for save tasks"""
+            conn = sqlite3.connect("Taks.db")
+            c = conn.cursor()
+            sql = 'INSERT INTO tasks (Num, Title, Description, DueDate, Priority, Done) VALUES (?, ?, ?, ?, ?, ?)'
+            c.execute(sql, (last_num_row + 1, title, description, Date, Priority, Done))
+            conn.commit()
+            sql2 = f""" SELECT * FROM tasks """
+            c.execute(sql2)
+            data = c.fetchall()
+            print(f"data = {data}")
+            conn.commit()
+            conn.close()
             self.dialog.dismiss()
             self.Title_Field.text = ""
             self.Description_Field.text = ""
             self.Date_Field.text = ""
-            self.update_cards(new_data=self.data_tables.row_data)
+            if platform == 'android':
+                toast("Your task has been added",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Your task has been added", duration=1.5 ,background=[1,0,0,1])
+            self.update_cards(new_data=self.data_tables.row_data)  # this is for updating card in dashboard
         except Exception as e :
             print(f"{e}")
+            if platform == 'android':
+                toast("Please try again!",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Please try again!", duration=1.5 ,background=[1,0,0,1])
 
 
     def on_check_press(self, instance_table, current_row):
@@ -924,30 +995,37 @@ class ToDoApp(MDApp):
         try:
             row = self.selected_rows[-1]
             print(self.data_tables.row_data)
-            selected_row_index = self.data_tables.row_data.index(tuple(self.selected_rows[-1]))
+            selected_row_index = self.data_tables.row_data.index(list(self.selected_rows[-1]))
             print(selected_row_index)
             print(row)
             self.show_edit_dialog(current_row=row, row_index=selected_row_index)
         except Exception as e:
             print(self.data_tables.row_data)
             print(f"{e}")
+            if platform == 'android':
+                toast("Please try again!",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Please try again!", duration=1.5 ,background=[1,0,0,1])
         
         
     def edit_data(self ,instance_button, **args ):
         """ This section is for editing data and working by update_row() method in datatables.py"""
         try: 
-
-            
             if self.Important_checkk.active:
-                Priority = "True"
+                Priority = "True"   
             else :
                 Priority = "False"
             print(self.data_tables.row_data)
-            selected_row_index = self.data_tables.row_data.index(tuple(self.selected_rows[-1]))
+            selected_row_index = self.data_tables.row_data.index(list(self.selected_rows[-1]))
             title = self.Title_Field_edit.text
             date = self.Date_Field_edit.text
-            
             num = self.data_tables.row_data[selected_row_index][0]
+            conn = sqlite3.connect("Taks.db")
+            c = conn.cursor()
+            sql = f""" SELECT * FROM tasks WHERE id = {num}"""
+            c.execute(sql)
+            id = c.fetchone()[0]
+            print(f"id = {id}")
             Done = self.data_tables.row_data[selected_row_index][5]
             if self.Description_Field_edit.text == "":
                 description = "_"
@@ -961,6 +1039,21 @@ class ToDoApp(MDApp):
                 self.data_tables.row_data[selected_row_index],  # old row data
                 [num,title,description,date,Priority,Done],          # new row data
             )
+            
+            """ Openning sql connection for save tasks"""
+            sql1 = f'''UPDATE tasks 
+                    SET Num = ?, Title = ?, Description = ?, DueDate = ?, Priority = ?, Done = ?
+                    WHERE id = {id}'''
+            c.execute(sql1, (num, title, description, date, Priority, Done))
+            sql2 = f""" SELECT * FROM tasks """
+            c.execute(sql2)
+            data = c.fetchall()
+            print(f"data = {data}")
+            conn.commit()
+            conn.close()
+            self.selected_rows.clear()
+            self.update_cards(new_data=self.data_tables.row_data)  # this is for updating card in dashboard
+            
             self.selected_rows.clear()
             self.dialog.dismiss()  # Closing the dialog
             self.dialogs = None
@@ -968,10 +1061,19 @@ class ToDoApp(MDApp):
             self.Title_Field_edit.text = ""
             self.Description_Field_edit.text = ""
             self.Date_Field_edit.text = ""
+            if platform == 'android':
+                toast("Your task has been editted",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Your task has been editted", duration=1.5 ,background=[1,0,0,1])
             self.update_cards(new_data=self.data_tables.row_data)
+            
         except Exception as e :
             print(self.data_tables.row_data)
             print(f"{e}")
+            if platform == 'android':
+                toast("Please try again!",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Please try again!", duration=1.5 ,background=[1,0,0,1])
                     
     
     def add(self) -> None:
@@ -981,13 +1083,26 @@ class ToDoApp(MDApp):
         """ This section is for a function to remove row
             First of all we should find the selection checkbox index row to remove it row """
         try:
-            if len(self.data_tables.row_data) > 1:  #If we have more than one tasks in table
+            conn = sqlite3.connect("Taks.db")
+            c = conn.cursor()
+            if len(self.data_tables.row_data) >= 1:  #If we have more than one tasks in table
                 print(self.data_tables.row_data)
-                selected_row_index = self.data_tables.row_data.index(tuple(self.selected_rows[-1]))
+                selected_row_index = self.data_tables.row_data.index(list(self.selected_rows[-1]))
                 print(selected_row_index)
+                num = self.data_tables.row_data[selected_row_index][0]
                 self.data_tables.remove_row(self.data_tables.row_data[selected_row_index]) # Main remove section
+                
+
+                sql1 = f'DELETE FROM tasks WHERE id = {num}'
+                c.execute(sql1)
+                sql2 = f""" SELECT * FROM tasks """
+                c.execute(sql2)
+                data = c.fetchall()
+                print(f"data = {data}")
+                conn.commit()
+                conn.close()
                 self.selected_rows.clear()
-                self.update_cards(new_data=self.data_tables.row_data)  # this is for updating card in dashboard
+                
                 
                 try:
                     self.selected_rows.append(self.data_tables.row_data[selected_row_index])  # Its because of checkbox doesnt delete after removing row and it checked so I write this line to change it to next line and person can uncheck that
@@ -996,10 +1111,24 @@ class ToDoApp(MDApp):
                 
             else: 
                 self.data_tables.remove_row(self.data_tables.row_data[0]) # If we have only on task in table
+                sql1 = f'DELETE FROM tasks WHERE Num = 1'
+                c.execute(sql1)
+                conn.commit()
+                conn.close()
+            if platform == 'android':
+                toast("Your task has been removed",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Your task has been removed", duration=1.5 ,background=[1,0,0,1])
+            self.update_cards(new_data=self.data_tables.row_data)  # this is for updating card in dashboard
         except Exception as e:
             print(f"{e}")
-    
-ToDoApp().run()
+            if platform == 'android':
+                    toast("Please try again!",gravity=80 ,length_long = 1.5)
+            else:
+                toast("Please try again!", duration=1.5 ,background=[1,0,0,1])
+
+if __name__ == "__main__":    
+    ToDoApp().run()
 
 
 
@@ -1009,17 +1138,17 @@ ToDoApp().run()
 ############## 
 """
 For tomarrow i should do these changes to my app:
-1.Make screens looks pretty / ALMOST DONE!
+1.Make screens looks pretty / DONE!
 2.adding Done and Delete button based on row checkmarks / DONE!
 3.changing the style of Add tasks button / DONE!
 4.Searching for notifications / FAILED!
-5.Adding a sqllite Database to my app
+5.Adding a sqllite Database to my app / FINAL TASK! / DONE!
 6.changing the texts fonts / DONE!
 7.make the lottie file for presplash screen
-8.Make filters segments settings / DONE! But it has bugs maybe i delete it
+8.Make filters segments settings / DONE! 
 9.make Prioroty sections in md dialog / DONE!
-10.make one screen to list items like they are listed by : tomarrow,today or ...   / ALMOST DONE!  
-11.writing comments for each sections
-12.Adding toasts for error handleres
+10.make one screen to list items like they are listed by : tomarrow,today or ...   / DONE!  
+11.writing comments for each sections / ALMOST DONE!
+12.Adding toasts for error handleres / DONE!
 """
 ##############

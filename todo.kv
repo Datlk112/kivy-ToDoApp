@@ -5,8 +5,9 @@ MDScreen:
         panel_color: (0.8, 0.8, 0.8, 0.5)
         font_name: "assets/fonts/Itim-Regular.ttf"
         MDBottomNavigationItem:
-            text: 'To Do'
+            text: 'Dashboard'
             icon: 'table-large'
+            
             MDFloatLayout:
                 id: table_holder
                 MDSegmentedControl:
@@ -22,7 +23,7 @@ MDScreen:
 
         MDBottomNavigationItem:
             name: 'Dashboard'
-            text: 'Dashboard'
+            text: 'To Do'
             icon: 'view-dashboard-edit-outline'
 
             
@@ -33,19 +34,13 @@ MDScreen:
                     size_hint_max_y:'50dp'
                     # size_hint_y: None
                     # height: self.texture_size[1] 
-                    title: "Dashboard"
+                    title: "To Do List"
                     md_bg_color:get_color_from_hex("273854")
                 MDRelativeLayout:
                     id:scrollDash
 
 
-        MDBottomNavigationItem:
-            name: 'screen 3'
-            text: 'Data Table'
-            icon: 'twitter'
-            MDLabel:
-                text: 'Screen 2'
-                halign: 'center'
+
 
 
 
@@ -133,29 +128,4 @@ MDScreen:
             app.show_calendar()
         
 
-
-# <MD3Card>:
-#     padding: 4
-#     size_hint: None, None
-#     size: "1000dp", "100dp"
-#     text:""
-#     # subtext:""
-#     MDRelativeLayout:
-#         MDIconButton:
-#             icon: "dots-vertical"
-#             pos_hint: {"top": 1, "right": 1}
-#         MDBoxLayout:
-#             orientation: "vertical"
-#             size_hint_x:None
-#             MDLabel:
-#                 text:root.text
-#                 text: root.text
-#                 adaptive_size: True
-#                 color: "grey"
-#                 pos: "12dp", "12dp"
-#                 bold: True
-#             MDLabel:
-#                 halign:"center"
-#                 font_style:"Caption"
-#                 text:root.subtext 
 
