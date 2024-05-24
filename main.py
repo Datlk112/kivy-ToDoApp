@@ -72,7 +72,7 @@ class ToDoApp(MDApp):
         """ Creating DataBase or connect to one """
         conn = sqlite3.connect("Taks.db")
         c = conn.cursor()
-        c.execute("""CREATE TABLE if not exists tasks (
+        c.execute("""CREATE TABLE if not exists tasks (   
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             Num INTEGER NOT NULL,
             Title VARCHAR(255) NOT NULL,
@@ -93,6 +93,7 @@ class ToDoApp(MDApp):
             spacing="24dp",
         )
 
+        # add/delete/edit Buttons
         for button_text in ["Add row", "Remove row","edit"]:
             if button_text == "Add row":
                 icons = "plus"
@@ -108,7 +109,7 @@ class ToDoApp(MDApp):
                     icon=icons,text=button_text, on_release=self.on_button_press,type="small",theme_icon_color="Custom",md_bg_color = color
                 )
             )
-
+        # Create datatable to showing task dashboard
         self.data_tables = MDDataTable(
             pos_hint={"center_y": 0.48, "center_x": 0.5},
             size_hint=(0.9, 0.7),
@@ -124,27 +125,28 @@ class ToDoApp(MDApp):
   
             ],
             row_data=[
-                    #   ,("2","Hi","Welcome",'1403-03-02',"False","True")
-                    #   ,("3","fciii","Welcomeeee",'1403-03-04',"False","False")
-                    #   ,("4","Hi","Welcome",'1403-03-02',"False","True")
-                    #   ,("5","fciiii","Welcomeeee",'1403-03-04',"False","False")
-                    #   ,("6","Hi","Welcome",'1403-03-02',"False","True")
-                    #   ,("7","fci","Welcomeeee",'1403-03-04',"False","False")
                       ],
             
         )
+        
+        # Connection for return all datas saved in data base
         conn = sqlite3.connect("Taks.db")
         c = conn.cursor()
         sql = f""" SELECT * FROM tasks"""
         c.execute(sql)
         ids = c.fetchall()
         for id in ids :
+            """ 
+            id[0] = id, id[1] = Num , id[2] = Title , id[3] = Description , id[4] = DueDate , id[5] = Priority , id[6] = Done 
+            """
+            # I prefer to use id for showing number and it means you can delete 'Num' from database
             self.data_tables.row_data.append([str(id[0]),id[2],id[3],id[4],id[5],id[6]])
         
         self.data_tables.bind(on_check_press=self.on_check_press)
+        # Creating card layout by MDGridLayout and dynamic size 
         self.cards_layout = MDGridLayout(cols=1, spacing=10,  padding = [10,10]  , size_hint_min_y= dp(100)*len(self.data_tables.row_data) + dp(200), top=20 )
-        self.scroll = MDScrollView(do_scroll_y = True , bar_width = "4dp", size=(Window.width, 1) , always_overscroll=True)
-
+        self.scroll = MDScrollView(do_scroll_y = True , bar_width = "4dp", size=(Window.width, 1) , always_overscroll=True)     # Here is scroll settings
+ 
         today = MDLabel(
                 text="Today Tasks",
                 color="grey",
@@ -169,7 +171,7 @@ class ToDoApp(MDApp):
                 print(humanized_date)
                 card = MD3Card(
                     size_hint=(1, None),
-                    size=(Window.width-20, dp(100)),  # تنظیم عرض هر کارت برابر با عرض صفحه و ارتفاع 100dp
+                    size=(Window.width-20, dp(100)), 
                     md_bg_color= "#EFDBF1" if data[5] == "False" else "#D6D6D6",
                     pos_hint={"top": 1},
                     style = "elevated" if data[4] == "False" else "outlined",
@@ -190,7 +192,7 @@ class ToDoApp(MDApp):
                 )
                 
                 card_layout = MDBoxLayout(
-                    orientation="vertical",  # تعیین جهت عمودی برای MDBoxLayout
+                    orientation="vertical", 
                     spacing=dp(40),
                     padding=[15,0,0,15]
 
@@ -268,7 +270,7 @@ class ToDoApp(MDApp):
                 print(humanized_date)
                 card = MD3Card(
                     size_hint=(1, None),
-                    size=(Window.width-20, dp(100)),  # تنظیم عرض هر کارت برابر با عرض صفحه و ارتفاع 100dp
+                    size=(Window.width-20, dp(100)), 
                     md_bg_color= "#EFDBF1" if data[5]=="False" else "#D6D6D6",
                     pos_hint={"top": 1},
                     style = "elevated" if data[4] == "False" else "outlined",
@@ -288,7 +290,7 @@ class ToDoApp(MDApp):
                 )
                         
                 card_layout = MDBoxLayout(
-                    orientation="vertical",  # تعیین جهت عمودی برای MDBoxLayout
+                    orientation="vertical",
                     spacing=dp(40),
                     padding=[15,0,0,15]
 
