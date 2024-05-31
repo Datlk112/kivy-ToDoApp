@@ -34,7 +34,7 @@ This is a brief demo of how does project works!
 
 ### features
 <h5>with these features:</h5>
- <p>1.These is a dashboard menu used MDDataTable and you can see your tasks detail </p>
+ <p>1.There is a dashboard menu used MDDataTable and you can see your tasks detail </p>
  <p>2.There is a filter in the top of dashboard page that you can change it between Completed and all tasks!</p>
  <p>3.You can add/edit/delete/complete your tasks</p>
  <p>4.Tasks are personalized for the people</p>
@@ -78,7 +78,7 @@ Then run this command for starting the proccess
 - [x] add unit tests
 - [x] complete the documentation
 - [x] create a video tutorial
-- [ ] fix the prioritised text in add/edit dialog box
+- [ ] fix the prioritised text size in add/edit dialog box
 
 | NOTE: If you want to use this code notice to fix prioritised text size in dialog .|
 | --- |
