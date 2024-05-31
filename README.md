@@ -29,7 +29,7 @@
 ### Demo
 This is a brief demo of how does project works!
 <p align="center">
-<img src="https://github.com/Novin1380/CBV_To_Do_App/blob/main/Demo/ToDoApp-Test.gif" alt="database schema" width="720"/>
+<img src="[https://github.com/Novin1380/CBV_To_Do_App/blob/main/Demo/ToDoApp-Test.gif](https://github.com/Novin1380/kivy-ToDoApp/blob/main/assets/Demo/ToDoApp-Demo.gif)" alt="database schema" width="250"/>
 </p>
 
 ### Database schema
