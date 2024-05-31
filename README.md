@@ -1,4 +1,4 @@
-# kivy-ToDo-app
+
 <h1 align="center">Simple Kivy ToDo App</h1> 
 <h2 align="center">This is a sample of a <strong>Demo Kivy</strong> ToDoApp</h2>
 
@@ -6,7 +6,6 @@
 - [Overview](#overview)
 - [Built With](#Built-With)
 - [Demo](#demo)
-- [Database schema](#database-schema)
 - [Features](#features)
 - [Setup](#setup)
 - [Getting ready](#getting-ready)
@@ -29,13 +28,7 @@
 ### Demo
 This is a brief demo of how does project works!
 <p align="center">
-<img src="https://github.com/Novin1380/CBV_To_Do_App/blob/main/Demo/ToDoApp-Test.gif" alt="database schema" width="720"/>
-</p>
-
-### Database schema
-A simple view of the project model schema.
-<p align="center">
-<img src="https://github.com/Novin1380/CBV_To_Do_App/blob/main/Demo/Data.PNG" alt="database schema" width="600"/>
+<img src="https://github.com/Novin1380/kivy-ToDoApp/blob/main/assets/Demo/ToDoApp-Demo.gif" alt="database schema" width="250"/>
 </p>
 
 ### features
@@ -75,16 +68,18 @@ Then run this command for starting the proccess
 !buildozer -v android debug
 ```
 
-
 ### Reformat and check
 💡If you want to use this code in your project, notice that the libraries that used in this code are in requirements.txt.
-💡Its important that all pages are LoginRequire so you should create accounts to test it.
 
 ### Todo
 - [x] leave comments for codes
 - [x] add unit tests
 - [x] complete the documentation
 - [x] create a video tutorial
+- [ ] fix the prioritised text in add/edit dialog box
+
+| NOTE: If you want to use this code notice to fix prioritised text size in dialog .|
+| --- |
 
 ### Bugs or Opinion
 Feel free to let me know if there are any problems or any request you have for this repo.
