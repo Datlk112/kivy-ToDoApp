@@ -6,7 +6,6 @@
 - [Overview](#overview)
 - [Built With](#Built-With)
 - [Demo](#demo)
-- [Database schema](#database-schema)
 - [Features](#features)
 - [Setup](#setup)
 - [Getting ready](#getting-ready)
@@ -30,12 +29,6 @@
 This is a brief demo of how does project works!
 <p align="center">
 <img src="https://github.com/Novin1380/kivy-ToDoApp/blob/main/assets/Demo/ToDoApp-Demo.gif" alt="database schema" width="250"/>
-</p>
-
-### Database schema
-A simple view of the project model schema.
-<p align="center">
-<img src="https://github.com/Novin1380/CBV_To_Do_App/blob/main/Demo/Data.PNG" alt="database schema" width="600"/>
 </p>
 
 ### features
