@@ -19,7 +19,8 @@
 ---
 
 <p align="center" >
-<img src="https://hugovk.github.io/python-logos/img/EuroPython%20Society.png" alt="database schema" margin="20px"  width="70" height="70"/>
+<img src="https://github.com/Novin1380/kivy-ToDoApp/blob/main/assets/Demo/kivy-icon.png" alt="Kivy" margin="20px"  width="70" height="70"/>
+<img src="https://hugovk.github.io/python-logos/img/EuroPython%20Society.png" alt="PYTHON" margin="20px"  width="70" height="70"/>
 <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite"  margin="20px" width="70" height="70"/>
 </p>
 
@@ -39,6 +40,7 @@ This is a brief demo of how does project works!
  <p>4.Tasks are personalized for the people</p>
  <p>5.In this project toast notifications has been used</p>
  <p>6.In this project, I changed MDDatePicker based on JalaliDate and you can select persian date for your tasks </p>
+ <p>7.Apllication front was written with python codes(not kv language) </p>
 
 
 ### Setup
