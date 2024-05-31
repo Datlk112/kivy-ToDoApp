@@ -378,7 +378,7 @@ class ToDoApp(MDApp):
                     for id in all :
                         list_all.append([str(id[0]),id[2],id[3],id[4],id[5],id[6]])
                         self.data_tables.row_data = list_all
-                elif filter_type == "Completed tasks":
+                elif filter_type == "Done tasks":
                     print("HI")
                     list_done = []
                     for id in Done :
@@ -1139,7 +1139,7 @@ if __name__ == "__main__":
 
 ############## 
 """
-For tomarrow i should do these changes to my app:
+I should do these changes to my app:
 1.Make screens looks pretty / DONE!
 2.adding Done and Delete button based on row checkmarks / DONE!
 3.changing the style of Add tasks button / DONE!
