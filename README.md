@@ -1,4 +1,4 @@
-# kivy-ToDo-app
+
 <h1 align="center">Simple Kivy ToDo App</h1> 
 <h2 align="center">This is a sample of a <strong>Demo Kivy</strong> ToDoApp</h2>
 
